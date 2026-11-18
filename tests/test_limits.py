@@ -2,7 +2,7 @@ from payments.limits import get_daily_limit
 
 
 def test_verified_limit():
-    assert get_daily_limit(verified=True) == 15_000
+    assert get_daily_limit(verified=True) == 20_000
 
 
 def test_unverified_limit():
