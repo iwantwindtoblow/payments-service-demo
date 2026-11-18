@@ -1,0 +1,46 @@
+# The pipeline: runs on every push, on the exact commit pushed.
+# On main, if all checks pass, it "deploys" to staging then production.
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m compileall -q src
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pipx run ruff check src tests
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pytest && pytest -q
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pipx run bandit -q -r src
+
+  deploy-staging:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build, lint, unit-tests, security-scan]
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - run: echo "Deploying ${{ github.sha }} to staging (simulated)"
+
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: echo "Deploying ${{ github.sha }} to production (simulated)"
