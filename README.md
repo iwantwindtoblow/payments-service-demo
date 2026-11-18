@@ -1,2 +1,5 @@
 # payments-service-demo
-Fake payments service: sandbox for an audit-automation prototype
+
+A **fake** payments service used as a sandbox for an audit-automation prototype
+(mr-compliance-auditor). Its git history deliberately contains compliant and
+non-compliant changes. Deployments are simulated (`echo`): nothing runs anywhere.
